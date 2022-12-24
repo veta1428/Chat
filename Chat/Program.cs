@@ -16,7 +16,7 @@ namespace Chat
             {
                 x.UseSqlServer(connectionString);
             });
-
+            
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
