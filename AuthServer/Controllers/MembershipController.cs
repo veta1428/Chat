@@ -1,19 +1,27 @@
 ﻿using AuthServer.Entities;
 using AuthServer.ViewModels;
+using Duende.IdentityServer.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthServer.Controllers
 {
-    public class AccountController : Controller
+    [Route("membership")]
+    public class MembershipController : Controller
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly IIdentityServerInteractionService _interaction;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public MembershipController(
+            UserManager<User> userManager, 
+            SignInManager<User> signInManager, 
+            IIdentityServerInteractionService interaction)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _interaction = interaction;
         }
 
         [HttpGet]
@@ -48,16 +56,22 @@ namespace AuthServer.Controllers
             return View(model);
         }
 
+        [Route("Login")]
         [HttpGet]
-        public IActionResult Login(string returnUrl = null)
+        public IActionResult Login(string? returnUrl = null)
         {
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
 
+        [Route("Login")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model, [FromQuery] string? smth = null)
         {
+            var h = HttpContext;
+
+            await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
+
             if (ModelState.IsValid)
             {
                 var result =
@@ -87,7 +101,9 @@ namespace AuthServer.Controllers
         public async Task<IActionResult> Logout()
         {
             // удаляем аутентификационные куки
-            await _signInManager.SignOutAsync();
+            //await _signInManager.SignOutAsync();
+
+            await HttpContext.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
     }

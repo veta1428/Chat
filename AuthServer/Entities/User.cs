@@ -2,7 +2,7 @@
 
 namespace AuthServer.Entities
 {
-    public class User : IdentityUser
+    public class User : IdentityUser<int>
     {
         public string FirstName { get; set; } = null!;
 

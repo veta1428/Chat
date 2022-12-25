@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using AuthServer.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AuthServer.Controllers
 {

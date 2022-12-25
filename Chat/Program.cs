@@ -1,6 +1,7 @@
 using Chat.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
+using Chat.Extensions;
 
 namespace Chat
 {
@@ -16,24 +17,42 @@ namespace Chat
             {
                 x.UseSqlServer(connectionString);
             });
-            
+            //builder.Services.AddCors();
             builder.Services.AddControllersWithViews();
+            builder.Services.ConfigureAuthorization();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
+            //app.UseCors(
+            //    options => options.AllowAnyOrigin()
+            //);
+
+            if (app.Environment.IsDevelopment())
             {
+                app.UseDeveloperExceptionPage();
+                app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
             }
+            else
+            {
+                app.UseExceptionHandler("/Error");
+
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
+            }
+
+            app.UseHttpsRedirection();
 
             app.UseStaticFiles();
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.MapControllers();
 
             app.MapFallbackToFile("index.html");
 
-            app.MapWhen(x => !x.Request.Path.Value.StartsWith("/api"), builder =>
+            app.MapWhen(x => !x.Request.Path.Value.StartsWith("/api") && !x.Request.Path.Value.StartsWith("/membership"), builder =>
             {
                 builder.UseSpa(spa =>
                 {

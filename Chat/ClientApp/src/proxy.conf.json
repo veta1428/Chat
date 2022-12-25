@@ -5,5 +5,12 @@
         "pathRewrite": {
             "^/api": "/api"
         }
+    },
+    "/membership": {
+        "target": "http://localhost:5089",
+        "secure": false,
+        "pathRewrite": {
+            "^/membership": "/membership"
+        }
     }
 }
