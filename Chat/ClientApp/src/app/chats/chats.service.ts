@@ -14,6 +14,6 @@ export class ChatService {
         this.baseUrl = baseUrl;
     }
     getChats() : Observable<ChatModelList>{
-        return this._client.get<ChatModelList>(this.baseUrl + 'api/chat/get-chats/1');
+        return this._client.get<ChatModelList>(this.baseUrl + 'api/chat/get-chats');
     }
 }
