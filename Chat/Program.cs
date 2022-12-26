@@ -2,6 +2,10 @@ using Chat.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
 using Chat.Extensions;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Authorization;
+using Chat.Services;
+using Chat.Middlewares;
 
 namespace Chat
 {
@@ -18,7 +22,18 @@ namespace Chat
                 x.UseSqlServer(connectionString);
             });
             //builder.Services.AddCors();
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews(options =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+
+                options.Filters.Add(new AuthorizeFilter(policy));
+            });
+
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<IUserAccessor, UserAccessor>();
+
             builder.Services.ConfigureAuthorization();
 
             var app = builder.Build();
@@ -46,6 +61,7 @@ namespace Chat
             app.UseRouting();
 
             app.UseAuthentication();
+            //app.UseMiddleware<UserAccessorMiddleware>();
             app.UseAuthorization();
 
             app.MapControllers();

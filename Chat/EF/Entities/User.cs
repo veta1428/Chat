@@ -9,5 +9,7 @@
         public IEnumerable<ChatUser> ChatUsers { get; set; } = new List<ChatUser>();
 
         public string FullName => FirstName + " " + LastName;
+
+        public int IdentityId { get; set; }
     }
 }

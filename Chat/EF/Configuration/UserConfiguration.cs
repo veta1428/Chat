@@ -15,11 +15,15 @@ namespace Chat.EF.Configuration
                 .WithOne(cu => cu.User)
                 .HasForeignKey(cu => cu.UserId);
 
+            builder
+                .HasIndex(u => u.IdentityId)
+                .IsUnique();
+
             builder.HasData(new User[]
             {
-                new User (){ Id = 1, FirstName = "Alice", LastName = "A"},
-                new User (){ Id = 2, FirstName = "Bob", LastName = "B"},
-                new User (){ Id = 3, FirstName = "Sam", LastName = "S"}
+                new User (){ Id = 1, FirstName = "Jane", LastName = "Doe", IdentityId = 1},
+                new User (){ Id = 2, FirstName = "User1", LastName = "Firstovich", IdentityId = 2 },
+                new User (){ Id = 3, FirstName = "User2", LastName = "Secondovich", IdentityId = 3 }
             });
         }
     }
