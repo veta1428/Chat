@@ -1,7 +1,7 @@
 ﻿using Chat.EF;
 using Chat.EF.Entities;
 using Chat.Models;
-using Microsoft.AspNetCore.Authorization;
+using Chat.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,18 +12,21 @@ namespace Chat.Controllers
     public class MessageController : ControllerBase
     {
         private readonly ChatContext _chatContext;
+        private readonly IUserAccessor _userAccessor;
 
-        public MessageController(ChatContext libraryContext)
+        public MessageController(
+            ChatContext libraryContext, 
+            IUserAccessor userAccessor)
         {
             _chatContext = libraryContext;
+            _userAccessor = userAccessor;
         }
 
         [HttpPost]
         [Route("send-message")]
         public async Task GetUsers([FromBody] SendTextMessageBody sendMessage, CancellationToken cancellationToken)
         {
-            // will be extracted from cookie further
-            var sender = await _chatContext.Users.FirstAsync();
+            var sender = _userAccessor.CurrentUser!;
 
             var message = new Message() { UserFrom = sender, SentDateTime = DateTime.UtcNow, ChatId = sendMessage.ChatIdTo };
 
@@ -47,7 +50,7 @@ namespace Chat.Controllers
                     m.UserFrom!.FirstName, 
                     m.UserFrom!.LastName, 
                     m.SentDateTime, 
-                    ((TextMessageContent)m.MessageContent).Text))
+                    (m.MessageContent as TextMessageContent).Text))
                 .ToListAsync(cancellationToken);
 
             return new MessagesListModel(messageModels);

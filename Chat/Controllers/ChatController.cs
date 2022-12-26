@@ -1,7 +1,7 @@
 ﻿using Chat.EF;
 using Chat.EF.Entities;
 using Chat.Models;
-using Microsoft.AspNetCore.Authorization;
+using Chat.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,18 +12,19 @@ namespace Chat.Controllers
     public class ChatController : ControllerBase
     {
         private readonly ChatContext _chatContext;
+        private readonly IUserAccessor _userAccessor;
 
-        public ChatController(ChatContext chatContext)
+        public ChatController(ChatContext chatContext, IUserAccessor userAccessor)
         {
             _chatContext = chatContext;
+            _userAccessor = userAccessor;
         }
 
         [HttpPost]
         [Route("create-chat")]
         public async Task CreateChat([FromBody] CreateChatModel createChatModel, CancellationToken cancellationToken)
         {
-            // will be extracted from cookie further
-            var userWhoCreatesChat = await _chatContext.Users.FirstAsync();
+            var userWhoCreatesChat = _userAccessor.CurrentUser!;
 
             var usersToCreateChatWith = await _chatContext.Users.Where(user => createChatModel.UserIds.Contains(user.Id)).ToListAsync(cancellationToken);
 
@@ -41,9 +42,11 @@ namespace Chat.Controllers
         }
 
         [HttpGet]
-        [Route("get-chats/{userId}")]
-        public async Task<ChatListModel> GetChatsForUser(int userId, CancellationToken cancellationToken)
+        [Route("get-chats")]
+        public async Task<ChatListModel> GetChatsForUser(CancellationToken cancellationToken)
         {
+            int userId = _userAccessor.CurrentUser!.Id;
+
             var chatModels = await _chatContext.Chats
                 .Where(chat => chat.ChatUsers.Any(cu => cu.UserId == userId))
                 .Select(chat => new ChatModel(chat.Id, chat.ChatUsers.Count() == 1 ? chat.ChatUsers.Single().User!.FullName : "No name group chat", chat.CreatedDateTime))
