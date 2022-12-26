@@ -27,8 +27,6 @@ export class UsersComponent implements OnInit{
     } 
 
     onRowClicked(user: UserModel): void{
-        // location.href = `books/${library.id}`;
-        // console.log('row clicked');
-        // console.log(library);
+        // 
     }
 }
