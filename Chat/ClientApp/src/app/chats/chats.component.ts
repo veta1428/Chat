@@ -1,6 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ChatModel } from '../models/ChatModel';
-import { LibraryModel } from '../models/LibraryModel';
 import { ChatService } from './chats.service';
 
 @Component({
@@ -27,9 +26,7 @@ export class ChatComponent implements OnInit{
         })
     } 
 
-    onRowClicked(library: LibraryModel): void{
-        // location.href = `books/${library.id}`;
-        // console.log('row clicked');
-        // console.log(library);
+    onRowClicked(chat: ChatModel): void{
+        // ToDo: handle
     }
 }
