@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using Chat.Auth;
+using Chat.EF;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -9,9 +13,12 @@ namespace Chat.Controllers
     [Route("[controller]")]
     public class MembershipController : ControllerBase
     {
-        public MembershipController()
+        private readonly ChatContext _context;
+        public MembershipController(ChatContext context)
         {
+            _context = context;
         }
+
         [Authorize]
         [Route("login")]
         [ApiExplorerSettings(IgnoreApi = true)]
@@ -49,11 +56,31 @@ namespace Chat.Controllers
                 throw new Exception("...");
             }
 
-            var user = identityId;
+            var user = await _context.Users
+                .Where(u => u.IdentityId == identityId)
+                .SingleAsync(cancellationToken);
 
-            throw new NotImplementedException("Login not implemented yet");
+            var sid = external!.FindFirst(JwtRegisteredClaimNames.Sid);
 
-            return new EmptyResult();
+            var email = external!.FindFirst(JwtRegisteredClaimNames.Name).Value;
+
+            var identity = new Identity()
+            {
+                Email = email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Id = user.Id,
+            };
+
+            identity.AddClaim(sid!);
+
+            
+            await HttpContext.SignOutAsync("External");
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity), result.Properties);
+
+            var returnUrl = result.Properties!.Items["returnUrl"] ?? "~/";
+
+            return LocalRedirect(returnUrl ?? "~/");
         }
     }
 }

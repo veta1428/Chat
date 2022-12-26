@@ -19,6 +19,7 @@ import { ChatComponent } from './chats/chats.component';
 import { ChatService } from './chats/chats.service';
 import { UsersComponent } from './users/users.component';
 import { UserService } from './users/users.service';
+import { AuthGuard } from './auth/auth-guard';
 
 @NgModule({
   declarations: [
@@ -38,12 +39,12 @@ import { UserService } from './users/users.service';
     MatTableModule,
     FormsModule,
     RouterModule.forRoot([
-      { path: '', component: LibraryComponent, pathMatch: 'full' },
+      { path: '', component: LibraryComponent, pathMatch: 'full', canActivate: [AuthGuard],},
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent },
       { path: 'libraries', component: LibraryComponent },
-      { path: 'chats', component: ChatComponent },
-      { path: 'users', component: UsersComponent },
+      { path: 'chats', component: ChatComponent,  canActivate: [AuthGuard]},
+      { path: 'users', component: UsersComponent, canActivate: [AuthGuard] },
       { path: 'books/:libraryId', component: BookComponent }
     ]),
     BrowserAnimationsModule

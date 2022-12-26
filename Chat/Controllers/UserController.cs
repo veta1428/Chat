@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Chat.Controllers
 {
-    [AllowAnonymous]
     [ApiController]
     [Route("api/[controller]")]
     public class UserController : ControllerBase
