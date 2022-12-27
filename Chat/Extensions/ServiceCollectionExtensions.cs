@@ -1,4 +1,5 @@
 ﻿using Chat.Auth;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using System.IdentityModel.Tokens.Jwt;
@@ -40,7 +41,7 @@ namespace Chat.Extensions
             {
                 options.SignInScheme = ExternalCookieScheme;
                 options.Authority = "http://localhost:5036";
-                options.ResponseType = "code";
+                options.ResponseType = "code id_token";
                 options.ClientId = "oidcClient";
                 options.ClientSecret = "SuperSecretPassword";
                 options.SaveTokens = true;
@@ -49,6 +50,25 @@ namespace Chat.Extensions
                 options.GetClaimsFromUserInfoEndpoint = true;
 
                 options.Scope.Add("openid");
+
+                options.Events = new OpenIdConnectEvents
+                {
+                    OnRedirectToIdentityProviderForSignOut = async (context) =>
+                    {
+                        var tokenName = "id_token";
+                        context.ProtocolMessage.IdTokenHint =
+                            await context.HttpContext.GetTokenAsync(tokenName) ??
+                            await context.HttpContext.GetTokenAsync("External", tokenName);
+                    }
+                };
+
+                options.Events.OnSignedOutCallbackRedirect += context =>
+                {
+                    context.Response.Redirect(context.Options.SignedOutRedirectUri);
+                    context.HandleResponse();
+
+                    return Task.CompletedTask;
+                };
                 //options.Scope.Add("profile");
                 //options.Scope.Add("email");
                 //options.Scope.Add("role");

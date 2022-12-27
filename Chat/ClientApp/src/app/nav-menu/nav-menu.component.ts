@@ -24,10 +24,6 @@ export class NavMenuComponent {
     this.isExpanded = !this.isExpanded;
   }
 
-  onLoginClicked() {
-    this._authService.login();
-  }
-
   onLogoutClicked() {
     this._authService.logout();
   }

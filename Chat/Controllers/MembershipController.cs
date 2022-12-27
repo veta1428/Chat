@@ -2,6 +2,7 @@
 using Chat.EF;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -28,11 +29,19 @@ namespace Chat.Controllers
         }
         
         [AllowAnonymous]
+        [Route("logout")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task Logout(string? returnUrl)
         {
-            throw new NotImplementedException("Logout not implemented");
-            //await _signInManager.SignOutAsync(returnUrl);
+            var properties = new AuthenticationProperties()
+            {
+                RedirectUri = returnUrl
+            };
+
+            await Task.WhenAll(
+                HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme, properties),
+                HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme, properties),
+                HttpContext.SignOutAsync("External", properties));
         }
 
         [Route("externalLoginCallback")]
