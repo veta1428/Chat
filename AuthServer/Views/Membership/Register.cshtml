@@ -1,7 +1,7 @@
 ﻿@model AuthServer.ViewModels.RegisterViewModel
 
 <h2>Регистрация нового пользователя</h2>
-<form method="post" asp-controller="Membership" asp-action="Register">
+<form method="post" asp-controller="Membership" asp-action="Register" asp-route-returnUrl="@ViewData["returnUrl"]">
     <div asp-validation-summary="ModelOnly"></div>
         <div>
         <label asp-for="FirstName"></label><br />

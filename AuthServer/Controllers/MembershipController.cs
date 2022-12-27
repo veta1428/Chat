@@ -1,6 +1,7 @@
 ﻿using AuthServer.Entities;
 using AuthServer.ViewModels;
 using Duende.IdentityServer.Services;
+using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -25,24 +26,39 @@ namespace AuthServer.Controllers
         }
 
         [HttpGet]
-        public IActionResult Register()
+        public IActionResult Register([FromQuery] string? returnUrl)
         {
+            ViewData["returnUrl"] = returnUrl;
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<IActionResult> Register(RegisterViewModel model, [FromQuery(Name ="returnUrl")] string? returnUrl)
         {
+            var h = HttpContext;
+
             if (ModelState.IsValid)
             {
                 User user = new User { Email = model.Email, UserName = model.Email, LastName = model.LastName, FirstName = model.FirstName };
                 // добавляем пользователя
                 var result = await _userManager.CreateAsync(user, model.Password);
+                await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim(JwtClaimTypes.GivenName, model.FirstName));
+                await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim(JwtClaimTypes.FamilyName, model.LastName));
+
                 if (result.Succeeded)
                 {
                     // установка куки
                     await _signInManager.SignInAsync(user, false);
-                    return RedirectToAction("Index", "Home");
+                    if (returnUrl is null)
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        await _interaction.GetAuthorizationContextAsync(returnUrl);
+                        await _signInManager.PasswordSignInAsync(model.Email, model.Password, true, false);
+                        return Redirect(returnUrl);
+                    }
                 }
                 else
                 {
@@ -52,6 +68,8 @@ namespace AuthServer.Controllers
                     }
                 }
             }
+
+            ViewData["returnUrl"] = returnUrl;
             // ToDo: return smth adequate
             return View(model);
         }

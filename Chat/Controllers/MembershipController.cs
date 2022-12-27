@@ -1,5 +1,6 @@
 ﻿using Chat.Auth;
 using Chat.EF;
+using Chat.EF.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -58,20 +59,30 @@ namespace Chat.Controllers
 
             var external = result.Principal!.Identity as ClaimsIdentity;
 
-            var sub = external?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+            if (external is null)
+            {
+                return Unauthorized("User is not authorized!");
+            }
+
+            var sub = external.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
 
             if (!int.TryParse(sub, out var identityId))
             {
-                throw new Exception("...");
+                throw new Exception("Could not confirm user identity(");
             }
 
             var user = await _context.Users
                 .Where(u => u.IdentityId == identityId)
-                .SingleAsync(cancellationToken);
+                .FirstOrDefaultAsync(cancellationToken);
 
-            var sid = external!.FindFirst(JwtRegisteredClaimNames.Sid);
+            if (user is null)
+            {
+                user = await AddUserAsync(external, identityId, cancellationToken);
+            }
 
-            var email = external!.FindFirst(JwtRegisteredClaimNames.Name).Value;
+            var sid = external.FindFirst(JwtRegisteredClaimNames.Sid);
+
+            var email = external.FindFirst(JwtRegisteredClaimNames.Name)?.Value;
 
             var identity = new Identity()
             {
@@ -82,7 +93,6 @@ namespace Chat.Controllers
             };
 
             identity.AddClaim(sid!);
-
             
             await HttpContext.SignOutAsync("External");
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity), result.Properties);
@@ -90,6 +100,22 @@ namespace Chat.Controllers
             var returnUrl = result.Properties!.Items["returnUrl"] ?? "~/";
 
             return LocalRedirect(returnUrl ?? "~/");
+        }
+
+        private async Task<User> AddUserAsync(ClaimsIdentity claimsIdentity, int identityId, CancellationToken cancellationToken)
+        {
+            var user = new User()
+            {
+                FirstName = claimsIdentity.FindFirst(JwtRegisteredClaimNames.GivenName)!.Value,
+                LastName = claimsIdentity.FindFirst(JwtRegisteredClaimNames.FamilyName)!.Value,
+                IdentityId = identityId
+            };
+
+            _context.Users.Add(user);
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return user;
         }
     }
 }
