@@ -96,15 +96,31 @@ namespace AuthServer.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logout()
+        [Route("logout")]
+        [HttpGet]
+        public async Task<IActionResult> Logout(string logoutId)
         {
             // удаляем аутентификационные куки
             //await _signInManager.SignOutAsync();
+            var context = await _interaction.GetLogoutContextAsync(logoutId);
+            var showSignoutPrompt = context?.ShowSignoutPrompt != false;
 
-            await HttpContext.SignOutAsync();
-            return RedirectToAction("Index", "Home");
+            if (User?.Identity?.IsAuthenticated == true)
+            {
+                // delete local authentication cookie
+                await HttpContext.SignOutAsync();
+            }
+
+            //context.PostLogoutRedirectUri = "http://localhost:5089/signout-callback-oidc";
+            return Redirect(context!.PostLogoutRedirectUri);
+            //return Ok(new
+            //{
+            //    showSignoutPrompt,
+            //    ClientName = string.IsNullOrEmpty(context?.ClientName) ? context?.ClientId : context?.ClientName,
+            //    context?.PostLogoutRedirectUri,
+            //    context?.SignOutIFrameUrl,
+            //    logoutId
+            //});
         }
     }
 }

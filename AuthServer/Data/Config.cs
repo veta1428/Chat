@@ -26,8 +26,9 @@ namespace AuthServer.Data
                     ClientName = "Example Client Application",
                     ClientSecrets = new List<Secret> {new Secret("SuperSecretPassword".Sha256())}, // change me!
                     
-                    AllowedGrantTypes = GrantTypes.Code,
-                    RedirectUris = new List<string> {"http://localhost:5089/signin-oidc"},
+                    AllowedGrantTypes = GrantTypes.Hybrid,
+                    RedirectUris = new List<string> { "http://localhost:5089/signin-oidc" },
+                    PostLogoutRedirectUris = new List<string> { "http://localhost:5089/signout-callback-oidc" },
                     AllowedScopes = new List<string>
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
@@ -37,7 +38,7 @@ namespace AuthServer.Data
                         "api1.read"
                     },
 
-                    RequirePkce = true,
+                    RequirePkce = false,
                     AllowPlainTextPkce = false
                 }
             };
@@ -72,7 +73,7 @@ namespace AuthServer.Data
                     Description = "Allow the application to access API #1 on your behalf",
                     Scopes = new List<string> {"api1.read", "api1.write"},
                     ApiSecrets = new List<Secret> {new Secret("ScopeSecret".Sha256())}, // change me!
-                    UserClaims = new List<string> {"role"}
+                    UserClaims = new List<string> {"role"},
                 }
             };
         }
