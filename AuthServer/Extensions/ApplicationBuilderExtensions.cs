@@ -2,11 +2,13 @@
 using AuthServer.Data;
 using AuthServer.EF;
 using AuthServer.Entities;
+using AuthServer.Options;
 using Duende.IdentityServer.EntityFramework.DbContexts;
 using Duende.IdentityServer.EntityFramework.Mappers;
 using IdentityModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace AuthServer.Extensions
 {
@@ -21,10 +23,10 @@ namespace AuthServer.Extensions
                 serviceScope.ServiceProvider.GetRequiredService<AuthServerContext>().Database.Migrate();
 
                 var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
-
+                var oidcOptions = serviceScope.ServiceProvider.GetRequiredService<IOptions<ChatOidcOptions>>();
                 if (!context.Clients.Any())
                 {
-                    foreach (var client in Clients.Get())
+                    foreach (var client in Clients.Get(oidcOptions.Value))
                     {
                         context.Clients.Add(client.ToEntity());
                     }

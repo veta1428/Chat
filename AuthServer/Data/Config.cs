@@ -1,15 +1,14 @@
-﻿using System.Security.Claims;
+﻿using AuthServer.Options;
 using Duende.IdentityServer;
 using Duende.IdentityServer.Models;
-using Duende.IdentityServer.Test;
 using IdentityModel;
 
 namespace AuthServer.Data
 {
     internal class Clients
     {
-        public static IEnumerable<Client> Get()
-        {
+        public static IEnumerable<Client> Get(ChatOidcOptions options)
+        {           
             return new List<Client>
             {
                 new Client
@@ -27,8 +26,8 @@ namespace AuthServer.Data
                     ClientSecrets = new List<Secret> {new Secret("SuperSecretPassword".Sha256())}, // change me!
                     
                     AllowedGrantTypes = GrantTypes.Hybrid,
-                    RedirectUris = new List<string> { "http://localhost:5089/signin-oidc" },
-                    PostLogoutRedirectUris = new List<string> { "http://localhost:5089/signout-callback-oidc" },
+                    RedirectUris = new List<string> { options.RedirectUri },
+                    PostLogoutRedirectUris = new List<string> { options.PostLogoutRedirectUri },
                     AllowedScopes = new List<string>
                     {
                         IdentityServerConstants.StandardScopes.OpenId,

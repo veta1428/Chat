@@ -2,6 +2,7 @@ using AuthServer.EF;
 using AuthServer.Entities;
 using AuthServer.Extensions;
 using AuthServer.Middlewares;
+using AuthServer.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -20,7 +21,9 @@ namespace AuthServer
             builder.Services.AddIdentity<User, IdentityRole<int>>()
                 .AddEntityFrameworkStores<AuthServerContext>();
 
-            //builder.Services.AddCors();
+            builder.Services.AddOptions();
+
+            builder.Services.Configure<ChatOidcOptions>(builder.Configuration.GetSection("ChatOidcOptions"));
 
             builder.Services.AddControllersWithViews();
 
@@ -30,10 +33,6 @@ namespace AuthServer
             builder.Logging.AddConsole();
 
             var app = builder.Build();
-
-            //app.UseCors(
-            //    options => options.AllowAnyOrigin()
-            //);
 
             await app.InitializeData();
 

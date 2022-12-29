@@ -14,14 +14,7 @@ namespace AuthServer.Extensions
                 options.Authentication.CheckSessionCookieName = "chat.auth";
 
                 options.UserInteraction.LoginUrl = "/membership/login";
-                //options.UserInteraction.ErrorUrl = "/account";
                 options.UserInteraction.LogoutUrl = "/membership/logout";
-                //options.UserInteraction.Register
-
-                //if (!string.IsNullOrEmpty(Configuration["Issuer"]))
-                //{
-                //    options.IssuerUri = Configuration["Issuer"];
-                //}
             })
 
             .AddConfigurationStore(options =>
@@ -43,11 +36,9 @@ namespace AuthServer.Extensions
                 // this enables automatic token cleanup. this is optional.
                 options.EnableTokenCleanup = true;
             })
-            //.AddMessageStores()
             .AddAspNetIdentity<User>()
             .AddDeveloperSigningCredential();
 
-            // for correct logout
             services.AddAuthentication(options =>
             {
                 options.DefaultSignOutScheme = options.DefaultAuthenticateScheme;
