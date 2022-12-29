@@ -5,7 +5,6 @@ using Chat.Extensions;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Chat.Services;
-using Chat.Middlewares;
 
 namespace Chat
 {
@@ -38,10 +37,6 @@ namespace Chat
 
             var app = builder.Build();
 
-            //app.UseCors(
-            //    options => options.AllowAnyOrigin()
-            //);
-
             if (app.Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -61,7 +56,7 @@ namespace Chat
             app.UseRouting();
 
             app.UseAuthentication();
-            //app.UseMiddleware<UserAccessorMiddleware>();
+
             app.UseAuthorization();
 
             app.MapControllers();

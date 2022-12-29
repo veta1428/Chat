@@ -35,8 +35,6 @@ namespace AuthServer.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model, [FromQuery(Name ="returnUrl")] string? returnUrl)
         {
-            var h = HttpContext;
-
             if (ModelState.IsValid)
             {
                 User user = new User { Email = model.Email, UserName = model.Email, LastName = model.LastName, FirstName = model.FirstName };
@@ -70,7 +68,6 @@ namespace AuthServer.Controllers
             }
 
             ViewData["returnUrl"] = returnUrl;
-            // ToDo: return smth adequate
             return View(model);
         }
 
@@ -86,8 +83,6 @@ namespace AuthServer.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, [FromQuery] string? smth = null)
         {
-            var h = HttpContext;
-
             await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
 
             if (ModelState.IsValid)
