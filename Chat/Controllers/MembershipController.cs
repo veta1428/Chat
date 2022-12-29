@@ -50,8 +50,6 @@ namespace Chat.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> ExternalLoginCallback(CancellationToken cancellationToken)
         {
-            //var signInResult = await _signInManager.SignInAsync(cancellationToken);
-
             var result = await HttpContext.AuthenticateAsync("External");
 
             if (!result.Succeeded)

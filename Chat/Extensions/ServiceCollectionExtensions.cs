@@ -1,7 +1,9 @@
 ﻿using Chat.Auth;
+using Chat.Options;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace Chat.Extensions
@@ -11,8 +13,10 @@ namespace Chat.Extensions
         public const string DefaultChallengeScheme = "Challenge";
         public const string ExternalCookieScheme = "External";
 
-        public static void ConfigureAuthorization(this IServiceCollection services)
+        public static void ConfigureAuthorization(this IServiceCollection services, IConfiguration configuration)
         {
+            var authorityOptions = configuration.GetSection("AuthorityOptions").Get<AuthorityOptions>();
+
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             services.AddAuthentication(options =>
@@ -40,7 +44,7 @@ namespace Chat.Extensions
             .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
             {
                 options.SignInScheme = ExternalCookieScheme;
-                options.Authority = "http://localhost:5036";
+                options.Authority = authorityOptions.Authority;
                 options.ResponseType = "code id_token";
                 options.ClientId = "oidcClient";
                 options.ClientSecret = "SuperSecretPassword";
@@ -69,10 +73,6 @@ namespace Chat.Extensions
 
                     return Task.CompletedTask;
                 };
-                //options.Scope.Add("profile");
-                //options.Scope.Add("email");
-                //options.Scope.Add("role");
-                //options.Scope.Add("api1.read");
             });
 
             services.ConfigureNonBreakingSameSiteCookies();

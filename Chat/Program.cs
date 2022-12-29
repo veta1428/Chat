@@ -4,6 +4,7 @@ using Chat.Extensions;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Chat.Services;
+using Chat.Options;
 
 namespace Chat
 {
@@ -29,10 +30,13 @@ namespace Chat
                 options.Filters.Add(new AuthorizeFilter(policy));
             });
 
+            builder.Services.AddOptions();
+            builder.Services.Configure<AuthorityOptions>(builder.Configuration.GetSection("AuthorityOptions"));
+
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<IUserAccessor, UserAccessor>();
 
-            builder.Services.ConfigureAuthorization();
+            builder.Services.ConfigureAuthorization(builder.Configuration);
 
             var app = builder.Build();
 
@@ -62,15 +66,18 @@ namespace Chat
 
             app.MapFallbackToFile("index.html");
 
-            app.MapWhen(x => !x.Request.Path.Value.StartsWith("/api") && !x.Request.Path.Value.StartsWith("/membership"), builder =>
+            if (app.Environment.IsDevelopment())
             {
-                builder.UseSpa(spa =>
+                app.MapWhen(x => !x.Request.Path.Value!.StartsWith("/api") && !x.Request.Path.Value.StartsWith("/membership"), builder =>
                 {
-                    spa.Options.SourcePath = "ClientApp";
-                    // spa.UseAngularCliServer(npmScript: "start");
-                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
+                    builder.UseSpa(spa =>
+                    {
+                        spa.Options.SourcePath = "ClientApp";
+                        // spa.UseAngularCliServer(npmScript: "start");
+                        spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
+                    });
                 });
-            });
+            }
 
             app.Run();
         }
