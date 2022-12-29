@@ -14,14 +14,17 @@
 
         <!-- Name Column -->
         <ng-container matColumnDef="createdDate">
-            <th mat-header-cell *matHeaderCellDef>Created Date</th>
+            <th mat-header-cell *matHeaderCellDef>Date of creation</th>
             <td mat-cell *matCellDef="let element">
                 <div class="row">
-                    {{element.createdDateTime }}
+                    {{ formatDate(element.createdDateTime) }}
                 </div>
             </td>
         </ng-container>
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns" class="column-title"></tr>
         <tr mat-row (click)="onRowClicked(row)" *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
+    <button mat-fab color="primary" class="fab-btn" (click)="onCreateChatBtnClicked()">
+        <mat-icon>chat</mat-icon>
+    </button>
 </ng-container>

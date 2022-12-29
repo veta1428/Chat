@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { ChatMessagesService } from './chat-messages.service';
 
 @Component({
@@ -8,7 +10,12 @@ import { ChatMessagesService } from './chat-messages.service';
 })
 export class ChatMessagesComponent implements OnInit
 {
-    constructor(private _chatMessagesService: ChatMessagesService) { }
+  //id: number | undefined;
+  //private subsciption: Subscription;
+    constructor( _chatMessagesService: ChatMessagesService, private activateRoute: ActivatedRoute) {
+      //get chatId from route
+      //this.subsciption = activateRoute.params.subscribe(params => this.id = params['chatId']);
+     }
     ngOnInit(): void {
         // ToDo?
     }

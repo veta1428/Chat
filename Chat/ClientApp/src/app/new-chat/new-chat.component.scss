@@ -21,6 +21,33 @@
     font-weight: bold;
 }
 
+.top-page-input-btn-div {
+    display: flex;
+    width: 100%;
+    margin-bottom: 10px;
+    align-items: baseline;
+}
+
+.chat-name-div {
+    display: flex;
+}
+
+.left-margin {
+    margin-left: 20px;
+}
+
+.error-message {
+    color: red;
+    visibility: hidden;
+    display: none;
+    margin-bottom: 10px;
+}
+
+.mat-checkbox {
+    accent-color:darkblue;
+}
+
+
 .mat-header-cell {
     color: black;
     font-size: large;
