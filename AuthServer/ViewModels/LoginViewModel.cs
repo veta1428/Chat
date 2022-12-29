@@ -10,11 +10,8 @@ namespace AuthServer.ViewModels
 
         [Required]
         [DataType(DataType.Password)]
-        [Display(Name = "Пароль")]
+        [Display(Name = "Password")]
         public string Password { get; set; } = null!;
-
-        [Display(Name = "Запомнить?")]
-        public bool RememberMe { get; set; }
 
         public string? ReturnUrl { get; set; }
     }

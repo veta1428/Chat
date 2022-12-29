@@ -1,25 +1,26 @@
 ﻿@model AuthServer.ViewModels.LoginViewModel
- 
-<h2>Вход в приложение</h2>
+
+<h2>Sign in</h2>
 <form method="post" asp-controller="Membership" asp-action="Login"
       asp-route-returnUrl="@Model.ReturnUrl">
     <div asp-validation-summary="ModelOnly"></div>
-    <div>
-        <label asp-for="Email"></label><br />
-        <input asp-for="Email" />
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label><br />
+        <input asp-for="Email" class="form-control" placeholder="Email" />
         <span asp-validation-for="Email"></span>
     </div>
-    <div>
-        <label asp-for="Password"></label><br />
-        <input asp-for="Password" />
+
+    <div class="mb-3">
+        <label asp-for="Password" class="form-label"></label><br />
+        <input asp-for="Password" class="form-control" placeholder="Password" />
         <span asp-validation-for="Password"></span>
     </div>
-    <div>
-        <label asp-for="RememberMe"></label><br />
-        <input asp-for="RememberMe" />
+    <div class="mb-3">
+        <span>
+            <input type="submit" class="btn btn-primary" value="Submit" />
+        </span>
+        <span>
+            <a asp-controller="Membership" asp-action="Register" asp-route-returnUrl="@Model.ReturnUrl" class="btn btn-outline-primary">Sign up</a>
+        </span>
     </div>
-    <div>
-        <input type="submit" value="Войти" />
-    </div>
-    <a asp-controller="Membership" asp-action="Register" asp-route-returnUrl="@Model.ReturnUrl">Регистрация</a>
 </form>
