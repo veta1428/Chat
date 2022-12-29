@@ -24,4 +24,9 @@ export class AuthService
     {
         return this._http.get<UserModel>("api/account/info").pipe(map(user => user !== null), catchError(() => of(false)));
     }
+
+    getUserInfo() :  Observable<UserModel>
+    {
+        return this._http.get<UserModel>("api/account/info");
+    }
 }
