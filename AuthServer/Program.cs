@@ -1,6 +1,7 @@
 using AuthServer.EF;
 using AuthServer.Entities;
 using AuthServer.Extensions;
+using AuthServer.Middlewares;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -26,7 +27,7 @@ namespace AuthServer
             var migrationsAssembly = typeof(Program).GetTypeInfo().Assembly.GetName().Name;
 
             builder.Services.ConfigureIdentityServer4(builder.Configuration, migrationsAssembly!);
-
+            builder.Logging.AddConsole();
 
             var app = builder.Build();
 
@@ -53,6 +54,8 @@ namespace AuthServer
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
 
             app.UseRouting();
 

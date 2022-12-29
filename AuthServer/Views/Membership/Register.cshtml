@@ -1,34 +1,39 @@
 ﻿@model AuthServer.ViewModels.RegisterViewModel
 
-<h2>Регистрация нового пользователя</h2>
+<h2>Sign up</h2>
 <form method="post" asp-controller="Membership" asp-action="Register" asp-route-returnUrl="@ViewData["returnUrl"]">
     <div asp-validation-summary="ModelOnly"></div>
-        <div>
-        <label asp-for="FirstName"></label><br />
-        <input asp-for="FirstName" />
+    <div class="mb-3">
+        <label asp-for="FirstName" class="form-label"></label><br />
+        <input asp-for="FirstName" class="form-control" placeholder="First Name" />
         <span asp-validation-for="FirstName"></span>
     </div>
-    <div>
-        <label asp-for="LastName"></label><br />
-        <input asp-for="LastName" />
+    <div class="mb-3">
+        <label asp-for="LastName" class="form-label"></label><br />
+        <input asp-for="LastName" class="form-control" placeholder="Last Name" />
         <span asp-validation-for="LastName"></span>
     </div>
-    <div>
-        <label asp-for="Email"></label><br />
-        <input asp-for="Email" />
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label><br />
+        <input asp-for="Email" class="form-control" placeholder="Email" />
         <span asp-validation-for="Email"></span>
     </div>
-    <div>
-        <label asp-for="Password"></label><br />
-        <input asp-for="Password" />
+    <div class="mb-3">
+        <label asp-for="Password" class="form-label"></label><br />
+        <input asp-for="Password" class="form-control" placeholder="Password" />
         <span asp-validation-for="Password"></span>
     </div>
-    <div>
-        <label asp-for="PasswordConfirm"></label><br />
-        <input asp-for="PasswordConfirm" />
+    <div class="mb-3">
+        <label asp-for="PasswordConfirm" class="form-label"></label><br />
+        <input asp-for="PasswordConfirm" class="form-control" placeholder="Confirm password" />
         <span asp-validation-for="PasswordConfirm"></span>
     </div>
-    <div>
-        <input type="submit" value="Регистрация" />
+    <div class="mb-3">
+        <span>
+            <input type="submit" value="Submit" class="btn btn-primary" />
+        </span>
+        <span>
+            <a asp-controller="Membership" asp-action="Login" asp-route-returnUrl="@ViewData["returnUrl"]" class="btn btn-outline-primary">Sign in</a>
+        </span>
     </div>
 </form>
