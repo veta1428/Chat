@@ -57,7 +57,9 @@ export class NewChatComponent implements OnInit {
         }        
 
         this._newChatService.createChat(this.chatUsers).subscribe();
-        this.router.navigate(['/chats']);
+        //this.router.navigate(['/chats']);
+				this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
+			this.router.navigate(['/chats']));
     }
 
     private setErrorMessage(message: string){
