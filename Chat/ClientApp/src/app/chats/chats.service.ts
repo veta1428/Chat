@@ -1,7 +1,6 @@
 import { Inject, Injectable } from "@angular/core";
 import { HttpClient } from '@angular/common/http';
 import { Observable } from "rxjs";
-import { ChatModel } from "../models/ChatModel";
 import { ChatModelList } from "../models/ChatModelList";
 
 @Injectable({

@@ -1,0 +1,55 @@
+<ng-container *ngIf="!isLoading">
+    <h1>New chat</h1>
+
+    <div class="top-page-input-btn-div">
+        <div class="chat-name-div">
+            <div>Enter group chat name:</div>
+            <input type="text" class="left-margin" id="chatNameInput"/>
+        </div>
+
+        <div class="left-margin">
+            <button mat-raised-button color="primary" (click)="onCreateChatClicked()">Create</button>
+        </div>
+    </div>
+
+    <div id="error-message" class="error-message">
+        Error message
+    </div>
+
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 demo-table">  
+        
+        <!-- Checkbox column -->
+        <ng-container matColumnDef="checkboxClmn">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let element">
+                <div>
+                    <!--<input type="checkbox" (click)=onCheckboxClicked($event, i)/>-->
+                    <mat-checkbox [(ngModel)]="element.checked" (change)="onCheckboxClicked($event,element)" color="primary"></mat-checkbox>
+                </div>
+            </td>
+        </ng-container>
+
+        <!-- Firstname column -->
+        <ng-container matColumnDef="firstName">
+            <th mat-header-cell *matHeaderCellDef>Firstname</th>
+            <td mat-cell *matCellDef="let element">
+                <div class="row">
+                    {{element.firstName}}
+                </div>
+            </td>
+        </ng-container>
+
+        <!-- Lastname column -->
+        <ng-container matColumnDef="lastName">
+            <th mat-header-cell *matHeaderCellDef>Lastname</th>
+            <td mat-cell *matCellDef="let element">
+                <div class="row">
+                    {{element.lastName}}
+                </div>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns; let index;"></tr>
+    </table>
+</ng-container>
