@@ -1,0 +1,31 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.input-validation-error {
+    border: 1px solid red !important;
+    color: red;
+}
+
+.field-validation-error {
+    color: red;
+}
+.validation-summary-errors {
+    color: red;
+    margin: 6px;
+}

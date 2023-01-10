@@ -1,0 +1,44 @@
+<ng-container *ngIf="!isLoading">
+
+	<mat-table [dataSource]="dataSource" class="demo-table">
+
+		<ng-container matColumnDef="firstName">
+			<mat-cell *matCellDef="let element">
+				<div class="row firstNameCol">
+					{{ element.firstName }}
+				</div>
+			</mat-cell>
+		</ng-container>
+
+		<ng-container matColumnDef="lastName">
+			<mat-cell *matCellDef="let element">
+				<div class="row lastNameCol">
+					{{ element.lastName }}
+				</div>
+			</mat-cell>
+		</ng-container>
+
+		<ng-container matColumnDef="sentDate">
+			<mat-cell *matCellDef="let element">
+				<div class="row sentDateCol">
+					{{ formatDate(element.sentDate) }}
+				</div>
+			</mat-cell>
+		</ng-container>
+
+		<ng-container matColumnDef="text">
+			<mat-cell *matCellDef="let element">
+				<div class="row textCol">
+					{{ element.text }}
+				</div>
+			</mat-cell>
+		</ng-container>
+
+		<mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+	</mat-table>
+
+	<div class="send-message-div">
+		<input placeholder="Enter message..." type="text" id="new-message-text" class="input-message">
+		<button mat-raised-button color="primary" (click)="onSendMessageClicked()" class="btn-send-message">Send</button>
+	</div>
+</ng-container>
