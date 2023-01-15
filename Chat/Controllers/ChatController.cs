@@ -24,13 +24,21 @@ namespace Chat.Controllers
         [Route("create-chat")]
         public async Task CreateChat([FromBody] CreateChatModel createChatModel, CancellationToken cancellationToken)
         {
+            if (createChatModel.UserIds is null || !createChatModel.UserIds.Any())
+                throw new InvalidOperationException("Chat cannot contain 1 user");
+
             var userWhoCreatesChat = _userAccessor.CurrentUser!;
 
             var usersToCreateChatWith = await _chatContext.Users.Where(user => createChatModel.UserIds.Contains(user.Id)).ToListAsync(cancellationToken);
 
             usersToCreateChatWith.Add(userWhoCreatesChat);
 
-            var chat = new Chat.EF.Entities.Chat() { CreatedDateTime = DateTime.UtcNow };
+            string? chatName = createChatModel.Name;
+
+            if (createChatModel.Name is null || createChatModel.Name == string.Empty)
+                chatName = usersToCreateChatWith[0].FullName;
+
+            var chat = new Chat.EF.Entities.Chat() { CreatedDateTime = DateTime.UtcNow, Name = chatName };
 
             var chatUsers = usersToCreateChatWith.Select(user => new ChatUser() { Chat = chat, User = user} );
 
@@ -49,7 +57,7 @@ namespace Chat.Controllers
 
             var chatModels = await _chatContext.Chats
                 .Where(chat => chat.ChatUsers.Any(cu => cu.UserId == userId))
-                .Select(chat => new ChatModel(chat.Id, chat.ChatUsers.Count() == 1 ? chat.ChatUsers.Single().User!.FullName : "No name group chat", chat.CreatedDateTime))
+                .Select(chat => new ChatModel(chat.Id, chat.Name, chat.CreatedDateTime))
                 .ToArrayAsync(cancellationToken);
 
             return new ChatListModel(chatModels);
