@@ -61,7 +61,7 @@ namespace Chat
             app.UseAuthentication();
 
             app.UseAuthorization();
-
+            
             app.MapControllers();
 
             app.MapFallbackToFile("index.html");
@@ -74,7 +74,8 @@ namespace Chat
                     {
                         spa.Options.SourcePath = "ClientApp";
                         // spa.UseAngularCliServer(npmScript: "start");
-                        spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
+                        ////////////////////////////////////
+                        spa.UseProxyToSpaDevelopmentServer("http://clientapp:4200");
                     });
                 });
             }
