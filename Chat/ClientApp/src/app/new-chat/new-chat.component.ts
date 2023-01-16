@@ -25,6 +25,10 @@ export class NewChatComponent implements OnInit {
 
     }
 
+    public get name(): string {
+        return (<HTMLInputElement>document.getElementById("chatNameInput")).value ?? null;
+    }
+
     ngOnInit(): void {
         this._newChatService.getUsers().subscribe((data) => {
             this.dataSource = data;
@@ -56,7 +60,7 @@ export class NewChatComponent implements OnInit {
             return;
         }        
 
-        this._newChatService.createChat(this.chatUsers).subscribe();
+        this._newChatService.createChat(this.chatUsers, this.name).subscribe();
         //this.router.navigate(['/chats']);
 				this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
 			this.router.navigate(['/chats']));

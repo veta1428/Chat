@@ -13,8 +13,8 @@ export class NewChatService {
         return this._client.get<UserModel[]>('api/user/get-users');
     }
 
-    createChat(chatUsers: UserModel[]): Observable<Object> {
-        const body = {userIds: chatUsers.map(user => user.userId)};
+    createChat(chatUsers: UserModel[], name: string): Observable<Object> {
+        const body = {userIds: chatUsers.map(user => user.userId), name: name};
         return this._client.post('api/chat/create-chat', body);
     }
 }
