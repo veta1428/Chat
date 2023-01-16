@@ -1,0 +1,61 @@
+version: '3.4'
+
+services:
+  db:
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    ports:
+        - "1433:1433"
+
+    environment:
+        SA_PASSWORD: "S3cur3P@ssW0rd!"
+        ACCEPT_EULA: "Y"
+
+  auth:
+    image: ${DOCKER_REGISTRY-}auth
+    build:
+      context: .
+      dockerfile: AuthServer/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development 
+      #- ASPNETCORE_URLS=http://+:80;https://+:443
+      #- ASPNETCORE_Kestrel__Certificates__Default__Password="secret123"
+      #- ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    expose:
+      - "80"
+    ports:
+      - "5036:80"
+    depends_on:
+      - db
+    volumes:
+      #- ~/.aspnet/https:/https/:ro
+      - ./AuthServer:/app
+
+
+  clientapp:
+    image: ${DOCKER_REGISTRY-}clientapp
+    build:
+      context: .
+      dockerfile: Chat/ClientApp/Dockerfile
+    ports:
+      - "4200:4200" 
+      - "49153:49153"
+    volumes:
+      - ./Chat/ClientApp:/app
+
+  chat:
+    image: ${DOCKER_REGISTRY-}chat
+    build:
+      context: .
+      dockerfile: Chat/Dockerfile
+    expose:
+      - "80"
+    environment:
+      - ASPNETCORE_URLS=http://+:80;http://+:5089
+    ports:
+      - "5089:80"
+    depends_on:
+      - db
+      - auth
+      - clientapp
+    volumes:
+      - ./Chat:/app

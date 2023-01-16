@@ -49,7 +49,7 @@ namespace AuthServer
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
