@@ -26,9 +26,9 @@ services:
       - "5036:80"
     depends_on:
       - db
-    volumes:
-      #- ~/.aspnet/https:/https/:ro
-      - ./AuthServer:/app
+    #volumes:
+    #  #- ~/.aspnet/https:/https/:ro
+    #  - ./AuthServer:/app
 
 
   clientapp:
@@ -49,13 +49,13 @@ services:
       dockerfile: Chat/Dockerfile
     expose:
       - "80"
-    environment:
-      - ASPNETCORE_URLS=http://+:80;http://+:5089
+    #environment:
+    #  - ASPNETCORE_URLS=http://+:80;http://+:5089
     ports:
       - "5089:80"
     depends_on:
       - db
       - auth
       - clientapp
-    volumes:
-      - ./Chat:/app
+    #volumes:
+    #  - ./Chat:/app
