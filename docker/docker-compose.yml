@@ -11,7 +11,7 @@ services:
         ACCEPT_EULA: "Y"
 
   auth:
-    image: ${DOCKER_REGISTRY-}auth
+    image: elza1428/test:latest
     build:
       context: .
       dockerfile: AuthServer/Dockerfile
@@ -32,7 +32,7 @@ services:
 
 
   clientapp:
-    image: ${DOCKER_REGISTRY-}clientapp
+    image: elza1428/test-client:latest
     build:
       context: .
       dockerfile: Chat/ClientApp/Dockerfile
@@ -43,7 +43,7 @@ services:
       - ./Chat/ClientApp:/app
 
   chat:
-    image: ${DOCKER_REGISTRY-}chat
+    image: elza1428/test-chat:latest
     build:
       context: .
       dockerfile: Chat/Dockerfile

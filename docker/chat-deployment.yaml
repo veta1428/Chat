@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: chat
+  name: chat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: chat
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: chat
+    spec:
+      containers:
+        - env:
+            - name: ASPNETCORE_URLS
+              value: http://+:80;http://+:5089
+          image: elza1428/test-chat:latest
+          name: chat
+          ports:
+            - containerPort: 80
+          resources: {}
+          volumeMounts:
+            - mountPath: /app
+              name: chat-claim0
+      restartPolicy: Always
+      volumes:
+        - name: chat-claim0
+          persistentVolumeClaim:
+            claimName: chat-claim0
+status: {}
