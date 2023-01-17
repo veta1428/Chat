@@ -38,7 +38,7 @@ export class ChatMessagesComponent implements OnInit {
         this.isLoading = false;
         this._detector.detectChanges();
       });
-    }, 5000);
+    }, 1000);
   }
 
   ngAfterViewChecked(): void {

@@ -36,7 +36,9 @@ namespace Chat.Controllers
             string? chatName = createChatModel.Name;
 
             if (createChatModel.Name is null || createChatModel.Name == string.Empty)
-                chatName = usersToCreateChatWith[0].FullName;
+            {
+                chatName = null;
+            }            
 
             var chat = new Chat.EF.Entities.Chat() { CreatedDateTime = DateTime.UtcNow, Name = chatName };
 
@@ -55,12 +57,29 @@ namespace Chat.Controllers
         {
             int userId = _userAccessor.CurrentUser!.Id;
 
-            var chatModels = await _chatContext.Chats
+            var chatModels = (await _chatContext.Chats
                 .Where(chat => chat.ChatUsers.Any(cu => cu.UserId == userId))
-                .Select(chat => new ChatModel(chat.Id, chat.Name, chat.CreatedDateTime))
-                .ToArrayAsync(cancellationToken);
+                .Include(chat => chat.ChatUsers)
+                .ThenInclude(chatUser => chatUser.User)
+                .ToArrayAsync(cancellationToken))
+                .Select(chat => new ChatModel(chat.Id, GetChatName(chat, userId), chat.CreatedDateTime));
 
             return new ChatListModel(chatModels);
+        }
+
+
+        private string? GetChatName(Chat.EF.Entities.Chat ch, int userId)
+        {
+            if (ch.Name is not null)
+                return ch.Name;
+
+            if (ch.ChatUsers.Count() == 2)
+            {
+                var chu = ch.ChatUsers.Where(c => c.User.Id != userId).Single();
+                return chu.User?.FullName; 
+            }
+
+            return null;
         }
     }
 }
