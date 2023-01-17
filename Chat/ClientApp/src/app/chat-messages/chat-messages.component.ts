@@ -31,6 +31,20 @@ export class ChatMessagesComponent implements OnInit {
 		})
 	}
 
+	ngAfterViewInit() {
+		setInterval(() => {
+			this._chatMessagesService.getMessages(this.id).subscribe((data) => {
+				this.dataSource = data.messageModels;
+				this.isLoading = false;
+				this._detector.detectChanges();
+			});
+		}, 5000);
+	}
+
+	ngAfterViewChecked(): void{
+		this.scrollMessagesToBottom();
+	}
+
 	onSendMessageClicked(): void {
 		if ((<HTMLInputElement>document.getElementById("new-message-text")).value === "") {
 			return;
@@ -52,5 +66,14 @@ export class ChatMessagesComponent implements OnInit {
 		var date = Date.parse(dateStr.toString());
 		var formattedDate = new Intl.DateTimeFormat("ru-RU", options).format(date);
 		return formattedDate;
+	}
+
+	scrollMessagesToBottom(): void {
+		  let messagesTable = document.getElementById("messages-table");
+		  messagesTable?.scroll ({
+			top: messagesTable.scrollHeight,
+			left: 0,
+			behavior: 'auto'
+		  });
 	}
 }
